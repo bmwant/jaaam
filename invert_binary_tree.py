@@ -1,13 +1,6 @@
 from typing import List
 
-class Node(object):
-    def __init__(self, value: int = None):
-        self.value = value
-        self.left: Node = None
-        self.right: Node = None
-
-    def __str__(self):
-        return f'{self.value}'
+from tree import Node, print_tree
 
 
 def generate_tree_inner(node: Node, levels: int) -> Node:
@@ -54,15 +47,6 @@ def generate_tree_mutable(node: Node, levels: int, counter: List[int] = [0]):
     node.left = generate_tree_mutable(Node(), levels-1, counter)
     node.right = generate_tree_mutable(Node(), levels-1, counter)
     return node
-
-
-def print_tree(root: Node, level: int = 0):
-    if root is None:
-        return
-    print_tree(root.right, level+1)
-    print('  ' * level, end='')
-    print(root)
-    print_tree(root.left, level+1)
 
 
 def invert_tree(node: Node) -> Node:
