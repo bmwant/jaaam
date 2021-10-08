@@ -8,7 +8,7 @@ class Node(object):
         return f'{self.value}'
 
 
-def generate_tree(node: Node, levels: int) -> Node:
+def generate_tree_(node: Node, levels: int) -> Node:
     counter = 0
 
     def gen_inner(node: Node, levels: int) -> Node:
@@ -23,6 +23,16 @@ def generate_tree(node: Node, levels: int) -> Node:
         return node
 
     return gen_inner(node, levels)
+
+
+def generate_tree(node: Node, levels: int, counter) -> Node:
+    if levels == 0:
+        return Node(counter)
+
+    node.value = counter
+    node.left = generate_tree(Node(), levels-1, counter+1)
+    node.right = generate_tree(Node(), levels-1, counter+1)
+    return node
 
 
 def print_tree(root: Node, level: int = 0):
@@ -41,4 +51,6 @@ def invert_tree(root: Node) -> Node:
 if __name__ == '__main__':
     root = Node()
     tree = generate_tree(root, 2)
+    print('Initial tree')
     print_tree(tree)
+    print('Inverted tree')
