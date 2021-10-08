@@ -65,8 +65,15 @@ def print_tree(root: Node, level: int = 0):
     print_tree(root.left, level+1)
 
 
-def invert_tree(root: Node) -> Node:
-    pass
+def invert_tree(node: Node) -> Node:
+    if node is None:
+        return
+
+    left_inverted = invert_tree(node.left)
+    right_inverted = invert_tree(node.right)
+    node.right = left_inverted
+    node.left = right_inverted
+    return node
 
 
 if __name__ == '__main__':
@@ -77,3 +84,5 @@ if __name__ == '__main__':
     print('Initial tree')
     print_tree(tree)
     print('Inverted tree')
+    inverted = invert_tree(tree)
+    print_tree(inverted)
