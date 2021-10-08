@@ -7,6 +7,9 @@ class Node(object):
     def __str__(self):
         return f'{self.value}'
 
+    def __repr__(self) -> str:
+        return self.__str__()
+
 
 def print_tree(root: Node, level: int = 0):
     if root is None:
