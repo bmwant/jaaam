@@ -1,4 +1,3 @@
-from typing import List, Optional, TypeVar
 from enum import Enum, auto
 from dataclasses import dataclass
 
@@ -49,15 +48,17 @@ def print_tree_stack(node: Node):
         level = arg.level
         if node is None:
             continue
-        if action == Action.TRAVERSE:
-            stack.append((Action.TRAVERSE, Arg(node=node.left, level=level+1)))
-            stack.append((Action.PRINT, Arg(node=node, level=level)))
-            stack.append((Action.TRAVERSE, Arg(node=node.right, level=level+1)))
-        elif action == Action.PRINT:
-            print('  ' * level, end='')
-            print(node)
-        else:
-            raise ValueError(f'Encountered improper action: {action}')
+        
+        match action:
+            case Action.TRAVERSE:
+                stack.append((Action.TRAVERSE, Arg(node=node.left, level=level+1)))
+                stack.append((Action.PRINT, Arg(node=node, level=level)))
+                stack.append((Action.TRAVERSE, Arg(node=node.right, level=level+1)))
+            case Action.PRINT:
+                print('  ' * level, end='')
+                print(node)
+            case _:
+                raise ValueError(f'Encountered improper action: {action}')
 
 
 if __name__ == '__main__':
