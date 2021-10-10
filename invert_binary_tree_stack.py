@@ -6,7 +6,7 @@ from tree import Node
 from invert_binary_tree import generate_tree_inner
 
 
-@dataclass
+@dataclass(kw_only=True)
 class Arg(object):
     node: Node
     level: int = 0
@@ -18,7 +18,7 @@ class Action(Enum):
     SWAP = auto()
 
 
-def invert_stack(node: Node) -> Node:
+def invert_tree_stack(node: Node) -> Node:
     stack = [(Action.TRAVERSE, Arg(node=node))]
     root = node
     while stack:
@@ -27,14 +27,17 @@ def invert_stack(node: Node) -> Node:
         if node is None:
             continue
 
-        if action == Action.TRAVERSE:
-            stack.append((Action.TRAVERSE, Arg(node=node.left)))
-            stack.append((Action.TRAVERSE, Arg(node=node.right)))
-            stack.append((Action.SWAP, Arg(node=node)))
-        elif action == Action.SWAP:
-            tmp = node.left
-            node.left = node.right
-            node.right = tmp
+        match action:
+            case Action.TRAVERSE:
+                stack.append((Action.TRAVERSE, Arg(node=node.left)))
+                stack.append((Action.TRAVERSE, Arg(node=node.right)))
+                stack.append((Action.SWAP, Arg(node=node)))
+            case Action.SWAP:
+                tmp = node.left
+                node.left = node.right
+                node.right = tmp
+            case _:
+                raise ValueError(f'Invalid action: {action}')
     return root
 
 
@@ -61,6 +64,6 @@ if __name__ == '__main__':
     tree = generate_tree_inner(Node(), 2)
     print('Initial tree')
     print_tree_stack(tree)
-    inverted = invert_stack(tree)
+    inverted = invert_tree_stack(tree)
     print('Inverted tree')
     print_tree_stack(inverted)
