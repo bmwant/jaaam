@@ -11,14 +11,31 @@ class Arg(object):
     node: Node
     level: int = 0
 
+
 class Action(Enum):
     TRAVERSE = auto()
     PRINT = auto()
+    SWAP = auto()
 
 
 def invert_stack(node: Node) -> Node:
-    stack = []
-    return node
+    stack = [(Action.TRAVERSE, Arg(node=node))]
+    root = node
+    while stack:
+        action, arg = stack.pop()
+        node = arg.node
+        if node is None:
+            continue
+
+        if action == Action.TRAVERSE:
+            stack.append((Action.TRAVERSE, Arg(node=node.left)))
+            stack.append((Action.TRAVERSE, Arg(node=node.right)))
+            stack.append((Action.SWAP, Arg(node=node)))
+        elif action == Action.SWAP:
+            tmp = node.left
+            node.left = node.right
+            node.right = tmp
+    return root
 
 
 def print_tree_stack(node: Node):
