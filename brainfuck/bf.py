@@ -1,3 +1,5 @@
+from typing import Optional
+
 class BrainFuck(object):
 
     MEM_CELLS = 30_000  # as per original implementation
@@ -21,32 +23,49 @@ class BrainFuck(object):
             )
         )
 
+    @property
+    def data(self):
+        return self._memory[self._pointer]
+
+    def _get_char_at(self, cursor: int) -> Optional[str]:
+        try:
+            return self._source[cursor]
+        except IndexError:
+            pass
+
     def run(self):
-        for i, c in enumerate(self._source):
+        cursor = 0
+        while c := self._get_char_at(cursor):
             match c:
                 case '>':
                     self._pointer += 1
                 case '<':
                     self._pointer -= 1
                 case '+':
-                    raise NotImplementedError('+ is not here yet')
+                    self._memory[self._pointer] += 1
                 case '-':
-                    raise NotImplementedError('- is not here yet')
+                    self._memory[self._pointer] -= 1
                 case '.':
-                    raise NotImplementedError('+ is not here yet')
+                    print(chr(self.data), end='', flush=True)
                 case ',':
-                    raise NotImplementedError('+ is not here yet')
+                    raise NotImplementedError(', is not here yet')
                 case '[':
-                    raise NotImplementedError('+ is not here yet')
+                    if self.data == 0:
+                        cursor = self._find_matching(']')
                 case ']':
-                    raise NotImplementedError('+ is not here yet')
+                    if self.data != 0:
+                        cursor = self._find_matching('[')
                 case _:
                     raise ValueError(f'Wrong command {c} is found!')
+            cursor += 1
+
+    def _find_matching(self, bracket: str) -> Optional[int]:
+        return 0
 
 
 def main():
     interpreter = BrainFuck()
-    interpreter.load('./examples/hello_world.b')
+    interpreter.load('./examples/test1.b')
     interpreter.run()
 
 
