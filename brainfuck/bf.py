@@ -1,6 +1,8 @@
 #!/usr/bin/env python
+import sys
 import argparse
 from typing import Optional
+
 
 class BrainFuck(object):
 
@@ -8,6 +10,7 @@ class BrainFuck(object):
     CHARACTERS = '><+-.,[]'
 
     def __init__(self, source: str = ''):
+        self.debug = False
         self._source : str = source
         self._pointer = 0
         self._memory = [0 for _ in range(self.MEM_CELLS)]
@@ -39,9 +42,15 @@ class BrainFuck(object):
         except IndexError:
             pass
 
+    def print_state(self):
+        print(self._pointer, self._memory[:20])
+
     def run(self):
         cursor = 0
         while ch := self._get_char_at(cursor):
+            if self.debug:
+                self.print_state()
+
             match ch:
                 case '>':
                     self._pointer += 1
@@ -59,9 +68,11 @@ class BrainFuck(object):
                 case '[':
                     if self.data == 0:
                         cursor = self._find_matching(']', cursor=cursor) + 1
+                        continue
                 case ']':
                     if self.data != 0:
                         cursor = self._find_matching('[', cursor=cursor)
+                        continue
                 case _:
                     raise ValueError(f'Wrong command {ch} is found!')
             cursor += 1
@@ -89,7 +100,11 @@ def main():
 
     interpreter = BrainFuck()
     interpreter.load(args.filepath)
-    interpreter.run()
+    try:
+        interpreter.run()
+    except KeyboardInterrupt:
+        print('\nBye!')
+        sys.exit(interpreter.data)
 
 
 if __name__ == '__main__':
