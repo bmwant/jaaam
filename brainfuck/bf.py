@@ -55,7 +55,7 @@ class BrainFuck(object):
                     raise NotImplementedError(', is not here yet')
                 case '[':
                     if self.data == 0:
-                        cursor = self._find_matching(']', cursor=cursor)
+                        cursor = self._find_matching(']', cursor=cursor) + 1
                 case ']':
                     if self.data != 0:
                         cursor = self._find_matching('[', cursor=cursor)
@@ -81,7 +81,7 @@ class BrainFuck(object):
 
 def main():
     interpreter = BrainFuck()
-    interpreter.load('./examples/test1.b')
+    interpreter.load('./examples/hello_world.b')
     interpreter.run()
 
 
