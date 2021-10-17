@@ -1,3 +1,5 @@
+#!/usr/bin/env python
+import argparse
 from typing import Optional
 
 class BrainFuck(object):
@@ -52,7 +54,8 @@ class BrainFuck(object):
                 case '.':
                     print(chr(self.data), end='', flush=True)
                 case ',':
-                    raise NotImplementedError(', is not here yet')
+                    # NOTE: one char input at a time is supported for now
+                    self.data = ord(input()[:1])
                 case '[':
                     if self.data == 0:
                         cursor = self._find_matching(']', cursor=cursor) + 1
@@ -80,8 +83,12 @@ class BrainFuck(object):
 
 
 def main():
+    parser = argparse.ArgumentParser()
+    parser.add_argument('filepath', type=str, help='*.b source file you want to run')
+    args = parser.parse_args()
+
     interpreter = BrainFuck()
-    interpreter.load('./examples/hello_world.b')
+    interpreter.load(args.filepath)
     interpreter.run()
 
 
