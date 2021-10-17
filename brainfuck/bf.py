@@ -5,8 +5,8 @@ class BrainFuck(object):
     MEM_CELLS = 30_000  # as per original implementation
     CHARACTERS = '><+-.,[]'
 
-    def __init__(self):
-        self._source : str = ''
+    def __init__(self, source: str = ''):
+        self._source : str = source
         self._pointer = 0
         self._memory = [0 for _ in range(self.MEM_CELLS)]
 
@@ -27,6 +27,10 @@ class BrainFuck(object):
     def data(self):
         return self._memory[self._pointer]
 
+    @data.setter
+    def data(self, value):
+        self._memory[self._pointer] = value
+
     def _get_char_at(self, cursor: int) -> Optional[str]:
         try:
             return self._source[cursor]
@@ -35,32 +39,44 @@ class BrainFuck(object):
 
     def run(self):
         cursor = 0
-        while c := self._get_char_at(cursor):
-            match c:
+        while ch := self._get_char_at(cursor):
+            match ch:
                 case '>':
                     self._pointer += 1
                 case '<':
                     self._pointer -= 1
                 case '+':
-                    self._memory[self._pointer] += 1
+                    self.data += 1
                 case '-':
-                    self._memory[self._pointer] -= 1
+                    self.data -= 1
                 case '.':
                     print(chr(self.data), end='', flush=True)
                 case ',':
                     raise NotImplementedError(', is not here yet')
                 case '[':
                     if self.data == 0:
-                        cursor = self._find_matching(']')
+                        cursor = self._find_matching(']', cursor=cursor)
                 case ']':
                     if self.data != 0:
-                        cursor = self._find_matching('[')
+                        cursor = self._find_matching('[', cursor=cursor)
                 case _:
-                    raise ValueError(f'Wrong command {c} is found!')
+                    raise ValueError(f'Wrong command {ch} is found!')
             cursor += 1
 
-    def _find_matching(self, bracket: str) -> Optional[int]:
-        return 0
+    def _find_matching(self, bracket: str, cursor: int = 0) -> Optional[int]:
+        direction = -1 if bracket == '[' else 1
+        counter = 1
+        while counter:
+            cursor += direction
+            ch = self._get_char_at(cursor)
+            if not ch:
+                raise ValueError('Cannot find matching bracket!')
+            if ch == ']':
+                counter -= direction
+            if ch == '[':
+                counter += direction
+
+        return cursor
 
 
 def main():

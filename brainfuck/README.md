@@ -2,3 +2,13 @@ Interpreter for the [Brainfuck](https://esolangs.org/wiki/Brainfuck) programming
 
 
 ### Usage
+
+```bash
+$
+```
+
+### Running tests
+
+```bash
+$ python tests.py
+```
