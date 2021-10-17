@@ -17,3 +17,11 @@ $ ./bf.py examples/fib.b  # Ctrl+C to terminate
 ```bash
 $ python tests.py
 ```
+
+### TODO
+
+* `test4.b` should fail with an error
+* input should be handled for multicharacter lines
+* `EOF` should be added to input handling
+* `debug` should be as a flag to run
+* `xmastree.b` should work?
