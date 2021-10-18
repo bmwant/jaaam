@@ -63,8 +63,10 @@ class BrainFuck(object):
                 case '.':
                     print(chr(self.data), end='', flush=True)
                 case ',':
-                    # NOTE: one char input at a time is supported for now
-                    self.data = ord(input()[:1])
+                    # NOTE: one char per input
+                    # https://en.wikipedia.org/wiki/Brainfuck#Commands
+                    if s := input():
+                        self.data = ord(s[0])
                 case '[':
                     if self.data == 0:
                         cursor = self._find_matching(']', cursor=cursor) + 1
@@ -99,7 +101,6 @@ def main():
     parser.add_argument('--debug', action='store_true')
     args = parser.parse_args()
 
-    print(args.debug)
     interpreter = BrainFuck(debug=args.debug)
     interpreter.load(args.filepath)
     try:
