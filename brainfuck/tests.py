@@ -3,7 +3,7 @@ import unittest
 from bf import BrainFuck
 
 
-class TestStringMethods(unittest.TestCase):
+class TestMatchingBrackets(unittest.TestCase):
 
     def test_find_matching_closing_bracket(self):
         interpreter = BrainFuck('[--[-]--]')

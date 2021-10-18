@@ -9,8 +9,8 @@ class BrainFuck(object):
     MEM_CELLS = 30_000  # as per original implementation
     CHARACTERS = '><+-.,[]'
 
-    def __init__(self, source: str = ''):
-        self.debug = False
+    def __init__(self, source: str = '', *, debug: bool = False):
+        self.debug = debug
         self._source : str = source
         self._pointer = 0
         self._memory = [0 for _ in range(self.MEM_CELLS)]
@@ -96,9 +96,11 @@ class BrainFuck(object):
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument('filepath', type=str, help='*.b source file you want to run')
+    parser.add_argument('--debug', action='store_true')
     args = parser.parse_args()
 
-    interpreter = BrainFuck()
+    print(args.debug)
+    interpreter = BrainFuck(debug=args.debug)
     interpreter.load(args.filepath)
     try:
         interpreter.run()
