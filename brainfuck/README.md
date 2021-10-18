@@ -20,7 +20,7 @@ $ python tests.py
 
 ### TODO
 
-[ ] `test4.b` should fail with an error
-[ ] `EOFError` handling
-[x] ~~`debug` should be as a flag to run~~
-[ ] `xmastree.b` should work?
+* [ ] `test4.b` should fail with an error
+* [ ] `EOFError` handling
+* [x] ~~`debug` should be as a flag to run~~
+* [ ] `xmastree.b` should work?
