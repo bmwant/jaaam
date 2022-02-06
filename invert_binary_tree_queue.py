@@ -36,21 +36,19 @@ def _get(array: List[T], index: int) -> Optional[T]:
         pass
 
 
-def expand_into_tree(elems: List[int]) -> Node:
+def expand_into_tree(elems: List[Node]) -> Node:
     queue = []
     counter = 0
     root = Node(elems[counter])
     queue.append(root)
     while queue:
         node = queue.pop()
-        if left_elem := _get(elems, counter+1):
-            left = Node(left_elem)
+        if left := _get(elems, counter+1):
             node.left = left
             queue.insert(0, left)
             counter += 1
 
-        if right_elem := _get(elems, counter+1):
-            right = Node(right_elem)
+        if right := _get(elems, counter+1):
             node.right = right
             queue.insert(0, right)
             counter +=1
@@ -58,9 +56,9 @@ def expand_into_tree(elems: List[int]) -> Node:
     return root
 
 
-def _invert_queue(node: Node) -> List[int]:
+def flatten_tree(node: Node) -> List[Node]:
     flatten = []
-    queue = [node, 0]
+    queue = [node]
     while queue:
         node = queue.pop()
         if node:
@@ -71,12 +69,14 @@ def _invert_queue(node: Node) -> List[int]:
 
 
 def invert_tree_queue(root: Node) -> Node:
-    inverted_elems = _invert_queue(root)
-    return expand_into_tree(inverted_elems)
+    linear_elems = flatten_tree(root)
+    return expand_into_tree(linear_elems)
 
 
 if __name__ == '__main__':
-    elems = [1, 2, 5, 3, 4, 6, 7]
+    values = [1, 2, 5, 3, 4, 6, 7]
+    elems = list(map(Node, values))
+    print(elems)
     # tree = generate_tree_inner(Node(), 2)
     # print_tree_stack2(tree)
     tree = expand_into_tree(elems)
