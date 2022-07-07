@@ -4,6 +4,7 @@ import (
 	"io"
 	"os"
 	"strings"
+	"unicode"
 )
 
 type rot13Reader struct {
@@ -11,14 +12,12 @@ type rot13Reader struct {
 }
 
 func rot13(b byte) byte {
-	var a, z byte
-	switch {
-	case 'a' <= b && b <= 'z':
-		a, z = 'a', 'z'
-	case 'A' <= b && b <= 'Z':
-		a, z = 'A', 'Z'
-	default:
+	var a, z byte = 'a', 'z'
+	if !unicode.IsLetter(rune(b)) {
 		return b
+	}
+	if unicode.IsUpper(rune(b)) {
+		a, z = 'A', 'Z'
 	}
 	return (b-a+13)%(z-a+1) + a
 }
