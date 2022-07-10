@@ -21,9 +21,9 @@ func (p Person) forgot(n int, forget int) bool {
 }
 
 func main() {
-	days := 20
+	days := 10
 	delay := 2
-	forget := 7
+	forget := 5
 	var people []Person = []Person{Person{Start: 0}}
 	p1 := make([]int, 0)
 	f1 := make([]int, 0)
