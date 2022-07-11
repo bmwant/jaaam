@@ -18,7 +18,6 @@ func generateParenthesis(n int) []string {
 		if right < left {
 			bt(s+")", left, right+1)
 		}
-		return
 	}
 	bt("", 0, 0)
 	return res
