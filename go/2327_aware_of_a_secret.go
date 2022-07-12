@@ -1,6 +1,9 @@
 package main
 
-import "fmt"
+import (
+	"fmt"
+	"math"
+)
 
 func sum(arr []int) (res int) {
 	for _, value := range arr {
@@ -11,7 +14,7 @@ func sum(arr []int) (res int) {
 
 func peopleAwareOfSecret2(n int, delay int, forget int) int {
 	f := make([]int, n)
-	mod := int(10e9 + 7)
+	mod := int(math.Pow(10, 9)) + 7
 	f[0] = 1
 	for i := delay; i < n; i++ {
 		start := i - forget + 1
@@ -32,6 +35,7 @@ func peopleAwareOfSecret(n int, delay int, forget int) int {
 	f := make([]int, forget)
 	f[0] = 1
 	fmt.Println("day 1", f, "shared", 0)
+	mod := int(math.Pow(10, 9)) + 7
 	for i := 1; i < n; i++ {
 		// fmt.Println(i+1, "shared to", sm)
 		f = append([]int{0}, f...)
@@ -42,7 +46,7 @@ func peopleAwareOfSecret(n int, delay int, forget int) int {
 		// drop those who forgot
 		// f = f[:len(f)-1]
 	}
-	return sum(f[:forget]) % int(10e9+7)
+	return sum(f[:forget]) % mod
 }
 
 func main() {
