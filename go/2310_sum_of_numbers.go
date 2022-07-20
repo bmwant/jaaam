@@ -50,12 +50,16 @@ func solvea(numS, kS, lS int) int {
 	return result
 }
 
-func solve(num, k int) int {
+func solve(num, k int, cache map[int]int) int {
 	if num == 0 {
 		return 0
 	}
 	if num%10 == k {
 		return 1
+	}
+	res, ok := cache[num]
+	if ok {
+		return res
 	}
 	minSol := math.MaxInt
 	for i := 0; ; i++ {
@@ -67,8 +71,8 @@ func solve(num, k int) int {
 			break
 		}
 		cRight := num - cLeft
-		solLeft := solve(cLeft, k)
-		solRight := solve(cRight, k)
+		solLeft := solve(cLeft, k, cache)
+		solRight := solve(cRight, k, cache)
 		currentSol := math.MaxInt
 		if solLeft != math.MaxInt && solRight != math.MaxInt {
 			currentSol = solLeft + solRight
@@ -77,12 +81,13 @@ func solve(num, k int) int {
 			minSol = currentSol
 		}
 	}
+	cache[num] = minSol
 	return minSol
 }
 
 func minimumNumbers(num int, k int) int {
-	// cache := make(map[int]int)
-	result := solve(num, k)
+	cache := make(map[int]int)
+	result := solve(num, k, cache)
 	if result == math.MaxInt {
 		return -1
 	}
