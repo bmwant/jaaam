@@ -2,16 +2,16 @@ package main
 
 import (
 	"fmt"
-	"math"
 )
 
 func main() {
-	fmt.Println("Hello, World!")
-	a := 'a'
-	b := 'b'
-	c := string(a) + string(b)
-	fmt.Println("This is c", a, b, c)
-	res := 237 % int(10e9+7)
-	fmt.Printf("%d\n", res)
-	fmt.Println("max int64", math.MaxInt64)
+	a := []int{1, 5, 3, 0, 7}
+	b := a
+	b = append(b, 10)
+	fmt.Printf(fmt.Sprintf("%v", a))
+	fmt.Printf(fmt.Sprintf("%v", b))
+	b[0] = 8
+	fmt.Printf(fmt.Sprintf("%v", a))
+	fmt.Printf(fmt.Sprintf("%v", b))
+
 }
