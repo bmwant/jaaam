@@ -13,5 +13,7 @@ func main() {
 	b[0] = 8
 	fmt.Printf(fmt.Sprintf("%v", a))
 	fmt.Printf(fmt.Sprintf("%v", b))
-
+	a1 := 7
+	a2 := 2
+	fmt.Println(a1 / a2)
 }
