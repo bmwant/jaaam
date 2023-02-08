@@ -1,0 +1,5 @@
+I'd like an Americano.
+No, thank you.
+Let me think.
+WAIT 15
+That's all.
