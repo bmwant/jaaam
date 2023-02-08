@@ -38,5 +38,4 @@ class Agent:
     def print(self, text: str):
         name = f"{self.NAME}"
         message = f"{self.ICON} {name}: {text}"
-        click.echo()
-        print()
+        click.echo(message)
