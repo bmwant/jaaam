@@ -1,3 +1,4 @@
+import re
 import asyncio
 from typing import List
 
@@ -6,6 +7,7 @@ from dialogue.main import MessagePump
 
 
 class Client(Agent):
+    ICON = "🚙"
     NAME = "Guest"
     COLOR = "magenta"
 
@@ -15,7 +17,7 @@ class Client(Agent):
         self.queries_iter = iter(self.queries)
 
     async def run(self):
-        self._polling_task = asyncio.create_task(
+        asyncio.create_task(
             self.wait_message_from(AgentID.SHOP)
         )
         while True:
@@ -27,14 +29,25 @@ class Client(Agent):
             else:
                 await asyncio.sleep(self.POLLING_DELAY)
     
-        self._polling_task.cancel()
+        # self._polling_task.cancel()
         print("Client agent task is finished")
+
+    def get_next_query(self) -> str:
+        query = next(self.queries_iter)
+        return query.strip().lower()
 
     async def handle(self, message):
         # NOTE: client does not actually handle messages from shop :)
         try:
-            query = next(self.queries_iter)
-            await self.say(text=query.strip())
+            query = next(self.queries_iter).strip()
+            query_normalized = query.lower()
+            wait_pattern = re.compile(r"wait (\d+)\.")
+            if match := wait_pattern.match(query_normalized):
+                wait_seconds = int(match.groups()[0])
+                await asyncio.sleep(wait_seconds)
+                query = next(self.queries_iter).strip()
+
+            await self.say(text=query)
             self._message = None
         except StopIteration:
             self._done = True

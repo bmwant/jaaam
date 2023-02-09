@@ -11,7 +11,7 @@ class AgentID(IntEnum):
 
 
 class Agent:
-    ICON = ""
+    ICON = "🧑"
     COLOR = "cyan"
     NAME = "Agent"
     POLLING_DELAY = 0.1
@@ -21,10 +21,13 @@ class Agent:
         self.agent_id = agent_id
         self._done : bool = False
         self._message = None
-        self._polling_task = None
+        # self._polling_task = None
 
     async def wait_message_from(self, agent_id=None):
         while True:
+            if self._done:
+                break
+
             message : Message = await self.queue.peek()
             if message is not None and message.agent_id == agent_id:
                 self._message = await self.queue.get()

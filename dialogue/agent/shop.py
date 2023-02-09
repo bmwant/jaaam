@@ -6,11 +6,12 @@ from dialogue.agent.base import Agent, AgentID
 
 class Shop(Agent):
     NAME = "Employee"
+    ICON = "🍔"
     COLOR = "yellow"
 
     async def run(self):
         await self.say("Hello!")
-        self._polling_task = asyncio.create_task(
+        asyncio.create_task(
             self.wait_message_from(AgentID.CLIENT)
         )
         while True:
@@ -22,7 +23,6 @@ class Shop(Agent):
             else:
                 await asyncio.sleep(self.POLLING_DELAY)
 
-        self._polling_task.cancel()
         print("Shop agent task is finished")
 
     async def handle(self, message: Message):
