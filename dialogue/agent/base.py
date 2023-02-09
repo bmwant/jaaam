@@ -12,6 +12,7 @@ class AgentID(IntEnum):
 
 class Agent:
     ICON = ""
+    COLOR = "cyan"
     NAME = "Agent"
     POLLING_DELAY = 0.1
 
@@ -36,6 +37,6 @@ class Agent:
         )
 
     def print(self, text: str):
-        name = f"{self.NAME}"
+        name = click.style(f"{self.NAME}", fg=self.COLOR, bold=True)
         message = f"{self.ICON} {name}: {text}"
         click.echo(message)

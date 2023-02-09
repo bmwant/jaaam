@@ -21,7 +21,11 @@ def process(guest_input):
         # NOTE: shared message queue to communicate between agents
         queue = MessagePump()
         # terminal = Terminal(queue=queue)
-        client = Client(queue=queue, agent_id=AgentID.CLIENT)
+        client = Client(
+            queue=queue, 
+            agent_id=AgentID.CLIENT,
+            queries=queries,
+        )
         shop = Shop(queue=queue, agent_id=AgentID.SHOP)
         tasks = [
             # asyncio.create_task(terminal.run()),

@@ -5,6 +5,9 @@ from dialogue.agent.base import Agent, AgentID
 
 
 class Shop(Agent):
+    NAME = "Employee"
+    COLOR = "yellow"
+
     async def run(self):
         await self.say("Hello!")
         self._polling_task = asyncio.create_task(
@@ -26,7 +29,8 @@ class Shop(Agent):
         print(f"Shop is processing {message}")
         # NOTE: waiting for the next message to arrive
         self._message = None
-        await self.say(f"Did you ask {message.text}?")
+        text = message.text.lower()
+        await self.say(f"Did you ask {text}?")
 
-        if message.text == "end":
+        if text == "that's all.":
             self._done = True
