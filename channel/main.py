@@ -81,10 +81,10 @@ async def main():
             print(f"Sent {i}")
 
         print("Finished producing")
-        Close(c)
+        Close(ch)
 
     async def consumer():
-        async for i in Range(c):
+        async for i in Range(ch):
             print(f"Received {i}")
         
         await asyncio.sleep(2)

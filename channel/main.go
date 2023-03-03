@@ -1,9 +1,10 @@
 package main
 
 import (
-	"fmt"
+	_ "fmt"
 	"time"
-	"reflect"
+	"log"
+	_ "reflect"
 )
 
 func main() {
@@ -12,14 +13,14 @@ func main() {
 
 	go func() {
 		for i := 0; i < 5; i++ {
-			fmt.Println(time.Now(), i, "sending")
+			log.Println("Sending", i)
 			ch <- i
-			fmt.Println(time.Now(), i, "sent")
+			log.Println("Sent", i)
 
-			// time.Sleep(1 * time.Second)
+			time.Sleep(1 * time.Second)
 		}
 
-		fmt.Println(time.Now(), "all completed, leaving")
+		log.Println("Finished producing")
 
 		close(ch)
 	}()
@@ -41,20 +42,19 @@ func main() {
 
 		// XXX: In cases where only one channel is used
 		for v := range ch {
-			fmt.Println(time.Now(), "received", v)
+			log.Println("Received", v)
 		}
-
+		log.Println("Finished consuming")
 		close(exit)
 	}()
 
-	fmt.Println(time.Now(), "waiting for everything to complete")
-	// close(exit)p(2*time.Second)
+	log.Println("Waiting for everything to complete")
+	<-exit
+	// var i struct {}
+	// i = <- exit
+	// fmt.Println(i, reflect.TypeOf(i))
+	// i = <- exit
+	// fmt.Println(i, reflect.TypeOf(i))
 
-	var i struct {}
-	i = <- exit
-	fmt.Println(i, reflect.TypeOf(i))
-	i = <- exit
-	fmt.Println(i, reflect.TypeOf(i))
-
-	fmt.Println(time.Now(), "exiting")
+	log.Println("All done, exiting!")
 }

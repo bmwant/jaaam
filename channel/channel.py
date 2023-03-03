@@ -1,6 +1,9 @@
 import asyncio
+import logging
 from typing import Any
 
+
+logging.basicConfig(level=logging.INFO, format="%(asctime)s %(message)s", datefmt="%Y/%m/%d %H:%M:%S")
 
 class Value:
     def __init__(self, value: Any = None):
@@ -20,12 +23,12 @@ class Channel:
         self._closed = False
 
     async def __lshift__(self, value):
-        # print(f"Receiving {value}")
+        logging.debug(f"Channel receiving {value}")
         return await self._channel.put(value)
 
     async def get(self):
         while True:
-            if self.closed:
+            if self.closed and self._channel.empty():
                 return
 
             try:
@@ -35,7 +38,7 @@ class Channel:
                 await asyncio.sleep(0.1)
 
     async def __rshift__(self, value: Value):
-        # print(f"Sending {value}")
+        logging.debug(f"Channel sending {value}")
         new_value = await self.get()
         value.value = new_value
 
@@ -57,9 +60,10 @@ class Range:
         return self
 
     async def __anext__(self):
-        if self._channel.closed:
+        value = await self._channel.get()
+        if value is None:
             raise StopAsyncIteration()
-        return await self._channel.get()
+        return value
 
 
 def Close(channel: Channel):
@@ -70,33 +74,34 @@ go = asyncio.create_task
 
 
 async def main():
-    ch = Channel(size=5)
+    ch = Channel(size=2)
     exit = Channel()
     _ = Value()
 
     async def producer():
         for i in range(5):
-            print(f"Sending {i}")
+            logging.info(f"Sending {i}")
             await (ch << i)
-            print(f"Sent {i}")
+            logging.info(f"Sent {i}")
+            await asyncio.sleep(1)
 
-        print("Finished producing")
+        logging.info("Finished producing")
         Close(ch)
 
     async def consumer():
-        async for i in Range(c):
-            print(f"Received {i}")
+        async for i in Range(ch):
+            logging.info(f"Received {i}")
         
-        await asyncio.sleep(2)
-        print("Finished consuming")
+        # await asyncio.sleep(2)
+        logging.info("Finished consuming")
         Close(exit)
 
     go(producer())
     go(consumer())
 
-    print("Waiting for everything to complete")
+    logging.info("Waiting for everything to complete")
     await (exit >> _)
-    print("All done, exiting!")
+    logging.info("All done, exiting!")
 
 
 if __name__ == "__main__":
