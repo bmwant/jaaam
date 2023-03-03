@@ -77,11 +77,11 @@ async def main():
     async def producer():
         for i in range(5):
             print(f"Sending {i}")
-            await (c << i)
+            await (ch << i)
             print(f"Sent {i}")
 
         print("Finished producing")
-        Close(c)
+        Close(ch)
 
     async def consumer():
         async for i in Range(c):
@@ -97,13 +97,6 @@ async def main():
     print("Waiting for everything to complete")
     await (exit >> _)
     print("All done, exiting!")
-    # await asyncio.sleep(2)
-    # print(f"Initial value: {v}")
-    # await (c << 2)
-    # await (c >> v)
-    # # breakpoint()
-    # print(c._channel.qsize())
-    # print(f"Value received from a channel: {v}")
 
 
 if __name__ == "__main__":

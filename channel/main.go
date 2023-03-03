@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"time"
+	"reflect"
 )
 
 func main() {
@@ -15,7 +16,7 @@ func main() {
 			ch <- i
 			fmt.Println(time.Now(), i, "sent")
 
-			time.Sleep(1 * time.Second)
+			// time.Sleep(1 * time.Second)
 		}
 
 		fmt.Println(time.Now(), "all completed, leaving")
@@ -47,8 +48,13 @@ func main() {
 	}()
 
 	fmt.Println(time.Now(), "waiting for everything to complete")
+	// close(exit)p(2*time.Second)
 
-	<-exit
+	var i struct {}
+	i = <- exit
+	fmt.Println(i, reflect.TypeOf(i))
+	i = <- exit
+	fmt.Println(i, reflect.TypeOf(i))
 
 	fmt.Println(time.Now(), "exiting")
 }
