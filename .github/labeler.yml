@@ -1,0 +1,16 @@
+# See https://github.com/actions/labeler for configuration examples
+'ui':
+- services/ui-gcs/**/*
+- services/uiserver/**/*
+
+'@service/datalayer':
+- services/datalayer/**/*
+
+'@service/saasbackend':
+- services/saasbackend/**/*
+
+'@service/taskscheduler':
+- services/taskscheduler/cronjobs/**/*
+
+'infra':
+- any: ['helm/**/*', 'terraform/**/*']
