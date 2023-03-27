@@ -15,24 +15,28 @@ class Value:
     def __repr__(self):
         return repr(self.value)
 
+    async def __lshift__(self, channel: "Channel"):
+        new_value = await channel.get()
+        self.value = new_value
+
 
 class Channel:
     def __init__(self, size: int = 0):
         self.size = size
-        self._channel = asyncio.Queue(maxsize=size)
+        self._queue = asyncio.Queue(maxsize=size)
         self._closed = False
 
     async def __lshift__(self, value):
         logging.debug(f"Channel receiving {value}")
-        return await self._channel.put(value)
+        return await self._queue.put(value)
 
     async def get(self):
         while True:
-            if self.closed and self._channel.empty():
+            if self.closed and self._queue.empty():
                 return
 
             try:
-                value = self._channel.get_nowait()
+                value = self._queue.get_nowait()
                 return value
             except asyncio.QueueEmpty:
                 await asyncio.sleep(0.1)
@@ -91,7 +95,7 @@ async def main():
     async def consumer():
         async for i in Range(ch):
             logging.info(f"Received {i}")
-        
+
         # await asyncio.sleep(2)
         logging.info("Finished consuming")
         Close(exit)
@@ -100,9 +104,25 @@ async def main():
     go(consumer())
 
     logging.info("Waiting for everything to complete")
-    await (exit >> _)
+    await (_ << exit)
     logging.info("All done, exiting!")
 
 
+async def test():
+    ch = Channel()
+    v = Value()
+
+    # Sending values to a channel
+    await (ch << 23)
+    await (ch << "this is a string")
+
+    # Receiving values from channel
+    await (v << ch)
+    print(f"v holds '{v}' value")
+    await (v << ch)
+    print(f"v now holds '{v}' value")
+
+
 if __name__ == "__main__":
-    asyncio.run(main())    
+    # asyncio.run(test())
+    asyncio.run(main())
