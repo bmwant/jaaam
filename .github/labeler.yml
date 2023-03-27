@@ -3,4 +3,6 @@
 - bash/**/*
 
 'infra':
-- any: ['**/helm/*', '**/terraform/*', '**/*.txt']
+- '**/helm/*'
+- '**/terraform/*'
+- '**/*.txt'
