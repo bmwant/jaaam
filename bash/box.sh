@@ -16,7 +16,6 @@ fi
 
 echo "Drawing a box $HEIGHT X $WIDTH size"
 
-
 function draw_vertical() {
     ((height = $2 - 2))
     ((width = $1 - 2))
@@ -34,7 +33,6 @@ function draw_horizontal() {
     for ((i=1;i<=width;i++)); do echo -n "-"; done
     echo "+"
 }
-
 
 draw_horizontal $WIDTH
 draw_vertical $WIDTH $HEIGHT
