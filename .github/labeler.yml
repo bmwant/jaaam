@@ -5,4 +5,3 @@
 'infra':
 - '**/helm/*'
 - '**/terraform/*'
-- '**/*.txt'
