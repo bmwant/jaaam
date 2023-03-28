@@ -3,6 +3,5 @@
 - bash/**/*
 
 'infra':
-- '**/helm/*'
 - '**/helm/**/*'
 - '**/terraform/*'
