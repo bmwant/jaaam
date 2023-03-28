@@ -1,4 +1,2 @@
 Checking updated glob
-ty2
-ty3
-ty4
+Check if working for nested
