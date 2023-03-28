@@ -1,4 +1,1 @@
-Checking updated glob
-ty2
-ty3
-ty4
+Checking

@@ -4,4 +4,4 @@
 
 'infra':
 - '**/helm/**/*'
-- '**/terraform/*'
+- '**/terraform/*/*'
