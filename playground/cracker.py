@@ -1,5 +1,5 @@
 import hashlib
-from concurrent.futures import ThreadPoolExecutor
+from concurrent import futures
 # hashlib.algorithms_available
 """
 bluegreen5419, md5, 1234
@@ -38,27 +38,53 @@ HASH_FUNCTIONS = [
 ]
 
 
+MAX_WORKERS = 20
+import itertools
+import string
+from dataclasses import dataclass
+
+
+@dataclass
+class Result:
+    guess: str
+    target_hash: str
+    match: bool = False
+    algorithm: str = "sha256"
+
 def encrypt(data: str, algorithm: str = "md5"):
     assert algorithm in HASH_FUNCTIONS, "unsupported encryption algorithm"
     h = hashlib.new(algorithm)
     h.update(data.encode())
     digest = h.hexdigest()
-    print(digest)
+    # print(digest)
     return digest
 
 
-def check(guess: str, target: str) -> bool:
-    return encrypt(guess, algorithm="md5") == target
+def check(guess: str, target: str) -> Result:
+    # print(".", end="")
+    match = encrypt(guess, algorithm="sha256") == target
+    return Result(
+        guess=guess,
+        target_hash=target,
+        match=match,
+    )
 
-import itertools
-import string
-def crack():
+
+def crack(target_hash: str):
     vocabulary = string.ascii_letters + string.digits
+    tasks = []
+    with futures.ThreadPoolExecutor(max_workers=MAX_WORKERS) as executor:
+        options = list(itertools.product(vocabulary, repeat=4))[:10000]
+        for product in options:
+            guess = "".join(product)
+            task = executor.submit(check, guess, target_hash)
+            tasks.append(task)
 
-with ThreadPoolExecutor(max_workers=4) as executor:
-    future = executor.submit(pow, 323, 1235)
-    print(future.result())
+    for future in futures.as_completed(tasks):
+        result: Result = future.result()
+        if result.match is True:
+            print(f"\nFound match! {result}")
 
 
 if __name__ == "__main__":
-    pass
+    crack("e8fdedf5163af505f15438bd233b61ab62eb0824ea1c5aa0702f6f8169d40cdc")
