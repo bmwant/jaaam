@@ -1,19 +1,22 @@
+"""
+Stop search as soon as correct solution is found.
+Use threading.Event for synchronization
+"""
 import hashlib
 import time
 import functools
-from concurrent import futures
 import itertools
 import string
+from threading import Event
 from dataclasses import dataclass
+from concurrent import futures
 
 from crack.data import HASH_FUNCTIONS
 
 # hashlib.algorithms_available
 
-
-
-MAX_WORKERS = 20
-
+MAX_WORKERS = 10
+FOUND = Event()
 
 
 @dataclass
@@ -21,7 +24,7 @@ class Result:
     guess: str
     target_hash: str
     match: bool = False
-    algorithm: str = "sha256"
+    algorithm: str = "md5"
 
 
 def encrypt(data: str, algorithm: str = "md5"):
@@ -45,61 +48,54 @@ def timeit(func):
     return wrapper
 
 
-def check(guess: str, target: str) -> Result:
+def check(guess: str, target: str, algorithm: str = "md5") -> Result:
     # print(".", end="")
-    match = encrypt(guess, algorithm="sha256") == target
+    match = encrypt(guess, algorithm=algorithm) == target
     return Result(
         guess=guess,
         target_hash=target,
         match=match,
+        algorithm=algorithm,
     )
+
+
+def done_callback(future):
+    try:
+        result: Result = future.result()
+    except futures.CancelledError:
+        # Solution was found, pending tasks are cancelled
+        return
+
+    if result.match is True:
+        FOUND.set()
+        print(f"\nFound match! {result}")
 
 
 @timeit
 def crack(target_hash: str):
     vocabulary = string.ascii_letters + string.digits
 
-    @timeit
-    def generate_tasks(executor):
-        tasks = []
-        options = list(itertools.product(vocabulary, repeat=4))[:100_000]
+    tasks = []
+    with futures.ThreadPoolExecutor(max_workers=MAX_WORKERS) as executor:
+        options = list(itertools.product(vocabulary, repeat=4))
         for product in options:
+            if FOUND.is_set():
+                executor.shutdown(wait=False, cancel_futures=True)
+                return
             guess = "".join(product)
             task = executor.submit(check, guess, target_hash)
+            task.add_done_callback(done_callback)
             tasks.append(task)
-        return tasks
-    
-    @timeit
-    def collect_results(tasks, executor) -> bool:
-        for future in futures.as_completed(tasks):
-            result: Result = future.result()
-            if result.match is True:
-                print(f"\nFound match! {result}")
-                executor.shutdown(wait=False, cancel_futures=True)
-                return True
-        print("\nNo match found :(")
-        return False
-    
-    with futures.ProcessPoolExecutor(max_workers=MAX_WORKERS) as executor:
-        tasks = generate_tasks(executor=executor)
-        collect_results(tasks=tasks, executor=executor)
+        
+    if not FOUND.is_set():
+        print("\nNo solution was found")
      
-
-if __name__ == "__main__":
-    crack("e8fdedf5163af505f15438bd233b61ab62eb0824ea1c5aa0702f6f8169d40cdc")
 
 """
 thread pool executor, 10 workers, funnybouncy1350
-generate / collect / crack
-10_000: 0.89s / 0.01s / 0.91s
-100_000: 1.44s / 0.10s / 1.59s
-1_000_000: 8.57s / 1.46s / 10.37s
-10_000_000: 123.29s / 40.80s / 169.39s
-
-process pool executor, 10 workers, funnybouncy1350
-generate / collect / crack
-10_000: 0.94s / 0.48s / 1.47s
-100_000: 1.87s / 0.65s / 2.57s
-1_000_000: ???
-10_000_000: ???
+10_000: 0.89s
+100_000: 0.87s
+1_000_000: 0.87s
+10_000_000: 1.05s
+ALL: 0.96s
 """

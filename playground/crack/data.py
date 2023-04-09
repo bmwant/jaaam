@@ -1,7 +1,7 @@
 """
 bluegreen5419, md5, 1234
-jollybouncy3231, md5, asdf
-mellowhappy6721, md5, wxyz
+jollybouncy3231, md5, asdf, 1.75s
+mellowhappy6721, md5, wxyz, 50.57s
 
 greenyellow3214, sha256, aa11
 crazyorange3831, sha256, a9b0
