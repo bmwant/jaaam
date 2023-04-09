@@ -1,4 +1,5 @@
 import hashlib
+from concurrent.futures import ThreadPoolExecutor
 # hashlib.algorithms_available
 """
 bluegreen5419, md5, 1234
@@ -44,6 +45,19 @@ def encrypt(data: str, algorithm: str = "md5"):
     digest = h.hexdigest()
     print(digest)
     return digest
+
+
+def check(guess: str, target: str) -> bool:
+    return encrypt(guess, algorithm="md5") == target
+
+import itertools
+import string
+def crack():
+    vocabulary = string.ascii_letters + string.digits
+
+with ThreadPoolExecutor(max_workers=4) as executor:
+    future = executor.submit(pow, 323, 1235)
+    print(future.result())
 
 
 if __name__ == "__main__":
