@@ -40,7 +40,7 @@ HASH_FUNCTIONS = [
 ]
 
 
-MAX_WORKERS = 10
+MAX_WORKERS = 20
 import itertools
 import string
 from dataclasses import dataclass
@@ -88,41 +88,29 @@ def check(guess: str, target: str) -> Result:
 @timeit
 def crack(target_hash: str):
     vocabulary = string.ascii_letters + string.digits
-
-    @timeit
-    def generate_tasks(executor):
-        tasks = []
+    tasks = []
+    with futures.ThreadPoolExecutor(max_workers=MAX_WORKERS) as executor:
         options = list(itertools.product(vocabulary, repeat=4))[:10_000_000]
         for product in options:
             guess = "".join(product)
             task = executor.submit(check, guess, target_hash)
             tasks.append(task)
-        return tasks
-    
-    @timeit
-    def collect_results(tasks, executor) -> bool:
+
         for future in futures.as_completed(tasks):
             result: Result = future.result()
             if result.match is True:
                 print(f"\nFound match! {result}")
                 executor.shutdown(wait=False, cancel_futures=True)
-                return True
-        print("\nNo match found :(")
-        return False
-    
-    with futures.ThreadPoolExecutor(max_workers=MAX_WORKERS) as executor:
-        tasks = generate_tasks(executor=executor)
-        collect_results(tasks=tasks, executor=executor)
-     
+                break
+
 
 if __name__ == "__main__":
     crack("e8fdedf5163af505f15438bd233b61ab62eb0824ea1c5aa0702f6f8169d40cdc")
 
 """
-thread pool executor, 10 workers, funnybouncy1350
-generate / collect / crack
-10_000: 0.89s / 0.01s / 0.91s
-100_000: 1.44s / 0.10s / 1.59s
-1_000_000: 8.57s / 1.46s / 10.37s
+thread pool executor, 20 workers, funnybouncy1350
+10_000: 0.909120 s
+100_000: 1.567167 s
+1_000_000: 10.040773 s
 10_000_000: 175.312619 s
 """
