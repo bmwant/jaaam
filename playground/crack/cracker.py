@@ -62,7 +62,7 @@ def crack(target_hash: str):
     @timeit
     def generate_tasks(executor):
         tasks = []
-        options = list(itertools.product(vocabulary, repeat=4))[:1_000_000]
+        options = list(itertools.product(vocabulary, repeat=4))[:100_000]
         for product in options:
             guess = "".join(product)
             task = executor.submit(check, guess, target_hash)

@@ -99,7 +99,7 @@ generate / collect / crack
 process pool executor, 10 workers, funnybouncy1350
 generate / collect / crack
 10_000: 0.94s / 0.48s / 1.47s
-100_000: ???
+100_000: 1.84s / 0.64s / 2.52s
 1_000_000: ???
 10_000_000: ???
 """
